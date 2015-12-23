@@ -1,7 +1,7 @@
 ### Step 1 - Start
 
 1. Install ionic `$ npm install -g ionic`
-2. Start ionic tabs template  `$ ionic start whatsapp tabs`
+2. Start ionic tabs template  `$ ionic start chatty tabs`
 
 ### Step 2 - Mock Whatsapp chats view, coding style and structure
 

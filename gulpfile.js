@@ -7,8 +7,16 @@ var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
 
+var nghtml2js = require('gulp-ng-html2js');
+var uglify = require('gulp-uglify');
+
+var pack = require('./package.json');
+
 var paths = {
-  sass: ['./scss/**/*.scss']
+  sass: ['./scss/**/*.scss'],
+  scripts: ['./www/js/**/*.js'],
+  templates: ['./www/templates/*.html', './www/js/**/*.html'],
+  dist: './www/dist/'
 };
 
 gulp.task('default', ['sass']);
@@ -27,8 +35,32 @@ gulp.task('sass', function(done) {
     .on('end', done);
 });
 
+gulp.task('scripts', function(done) {
+  return gulp.src(paths.templates)
+    .pipe(nghtml2js({
+      moduleName: 'chattyTemplates',
+      prefix: 'js/'
+    }))
+    .pipe(concat(pack.version+".temp.js"))
+    .pipe(gulp.dest(paths.dist))
+    .pipe(gulp.src(paths.scripts)
+      .pipe(concat(pack.version+'.js'))
+      .pipe(gulp.dest(paths.dist))
+      .pipe(gulp.src([paths.dist+pack.version+".temp.js", paths.dist+pack.version+".js"])
+        .pipe(concat(pack.version+'.min.js'))
+        .pipe(uglify({
+          mangle: false
+        }))
+        .pipe(gulp.dest(paths.dist))
+      )
+    );
+});
+
+
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
+  gulp.watch(paths.scripts, ['scripts']);
+  gulp.watch(paths.templates, ['scripts']);
 });
 
 gulp.task('install', ['git-check'], function() {

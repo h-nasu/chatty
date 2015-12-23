@@ -1,6 +1,7 @@
 angular
-  .module('whatsapp', [
+  .module('chatty', [
     'ionic',
     'angular-meteor',
-    'angularMoment'
+    'angularMoment',
+    'chattyTemplates'
   ]);

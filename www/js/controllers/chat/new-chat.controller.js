@@ -1,5 +1,5 @@
 angular
-  .module('whatsapp')
+  .module('chatty')
   .controller('NewChatCtrl', NewChatCtrl);
 
 function NewChatCtrl ($scope, $state, $meteor) {

@@ -1,5 +1,5 @@
 angular
-  .module('whatsapp')
+  .module('chatty')
   .run(run);
 
 function run ($ionicPlatform) {

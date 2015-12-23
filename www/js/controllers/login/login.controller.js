@@ -1,6 +1,17 @@
 angular
-  .module('whatsapp')
+  .module('chatty')
+  .config(LoginConfig)
   .controller('LoginCtrl', LoginCtrl);
+
+function LoginConfig ($stateProvider) {
+  $stateProvider
+  .state('login', {
+    url: '/login',
+    templateUrl: 'js/controllers/login/login.html',
+    controller: 'LoginCtrl'
+  })
+  ;
+}
 
 function LoginCtrl ($scope, $state, $ionicLoading, $ionicPopup, $log) {
 

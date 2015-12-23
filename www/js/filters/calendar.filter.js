@@ -1,5 +1,5 @@
 angular
-  .module('whatsapp')
+  .module('chatty')
   .filter('calendar', calendar);
 
 function calendar () {

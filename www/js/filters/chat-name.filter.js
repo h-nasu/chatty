@@ -1,5 +1,5 @@
 angular
-  .module('whatsapp')
+  .module('chatty')
   .filter('chatName', chatName);
 
 function chatName () {

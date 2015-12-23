@@ -1,11 +1,26 @@
 angular
-  .module('whatsapp')
+  .module('chatty')
+  .config(ChatsConfig)
   .controller('ChatsCtrl', ChatsCtrl);
+
+function ChatsConfig ($stateProvider) {
+  $stateProvider
+  .state('tab.chats', {
+    url: '/chats',
+    views: {
+      'tab-chats': {
+        templateUrl: 'js/controllers/chat/tab-chats.html',
+        controller: 'ChatsCtrl'
+      }
+    }
+  })
+  ;
+}
 
 function ChatsCtrl ($scope, $meteor, $ionicModal) {
   $scope.chats = $scope.$meteorCollection(Chats, false);
 
-  $ionicModal.fromTemplateUrl('templates/new-chat.html', {
+  $ionicModal.fromTemplateUrl('js/controllers/chat/new-chat.html', {
     scope: $scope
   }).then(function (modal) {
     $scope.modal = modal;

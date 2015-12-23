@@ -1,6 +1,6 @@
 {
   "TWILIO": {
-    "FROM": "meteor-whatsapp",
+    "FROM": "meteor-chatty",
     "SID": "",
     "TOKEN": ""
   },

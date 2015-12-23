@@ -1,6 +1,22 @@
 angular
-  .module('whatsapp')
+  .module('chatty')
+  .config(ProfileConfig)
   .controller('ProfileCtrl', ProfileCtrl);
+
+function ProfileConfig ($stateProvider) {
+  $stateProvider
+  .state('profile', {
+    url: '/profile',
+    templateUrl: 'js/controllers/setting/profile.html',
+    controller: 'ProfileCtrl',
+    resolve: {
+      user: ['$meteor', function ($meteor) {
+        return $meteor.requireUser();
+      }]
+    }
+  })
+  ;
+}
 
 function ProfileCtrl ($scope, $state, $meteor, $ionicLoading, $ionicPopup, $log) {
 

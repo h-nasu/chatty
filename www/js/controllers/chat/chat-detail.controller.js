@@ -1,6 +1,21 @@
 angular
-  .module('whatsapp')
+  .module('chatty')
+  .config(ChatDetailConfig)
   .controller('ChatDetailCtrl', ChatDetailCtrl);
+
+function ChatDetailConfig ($stateProvider) {
+  $stateProvider
+  .state('tab.chat-detail', {
+    url: '/chats/:chatId',
+    views: {
+      'tab-chats': {
+        templateUrl: 'js/controllers/chat/chat-detail.html',
+        controller: 'ChatDetailCtrl'
+      }
+    }
+  })
+  ;
+}
 
 function ChatDetailCtrl ($scope, $stateParams, $timeout, $meteor, $ionicScrollDelegate) {
   var chatId = $stateParams.chatId;

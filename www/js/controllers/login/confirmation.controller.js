@@ -1,6 +1,17 @@
 angular
-  .module('whatsapp')
+  .module('chatty')
+  .config(ConfirmationConfig)
   .controller('ConfirmationCtrl', ConfirmationCtrl);
+
+function ConfirmationConfig ($stateProvider) {
+  $stateProvider
+  .state('confirmation', {
+    url: '/confirmation/:phone',
+    templateUrl: 'js/controllers/login/confirmation.html',
+    controller: 'ConfirmationCtrl'
+  })
+  ;
+}
 
 function ConfirmationCtrl ($scope, $state, $ionicPopup, $log) {
 
