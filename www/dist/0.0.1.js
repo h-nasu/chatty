@@ -8,9 +8,9 @@ angular
 
 angular
   .module('chatty')
-  .run(run);
+  .run(authReq);
 
-function run ($rootScope, $state) {
+function authReq ($rootScope, $state) {
   $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
     // We can catch the error thrown when the $requireUser promise is rejected
     // and redirect the user back to the main page
@@ -26,9 +26,9 @@ Messages = new Mongo.Collection('messages');
 
 angular
   .module('chatty')
-  .run(run);
+  .run(ionicPlat);
 
-function run ($ionicPlatform) {
+function ionicPlat ($ionicPlatform) {
   $ionicPlatform.ready(function () {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -41,14 +41,28 @@ function run ($ionicPlatform) {
       // org.apache.cordova.statusbar required
       StatusBar.styleLightContent();
     }
+
+    // If not PC
+    /*
+    if (!_.isEmpty(ionic.Platform.device())) {
+      //var deviceInfo = cordova.require("cordova/plugin/DeviceInformation");
+      var deviceInfo = window.cordova.plugins.DeviceInformation;
+      deviceInfo.get(function(result) {
+        console.log("result = " + result);
+      }, function() {
+         console.log("error");
+      });
+    }
+    */
+
   });
 }
 
 angular
   .module('chatty')
-  .config(config);
+  .config(initRoute);
 
-function config ($stateProvider, $urlRouterProvider) {
+function initRoute ($stateProvider, $urlRouterProvider) {
   $stateProvider
 
   .state('tab', {

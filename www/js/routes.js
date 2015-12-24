@@ -1,8 +1,8 @@
 angular
   .module('chatty')
-  .config(config);
+  .config(initRoute);
 
-function config ($stateProvider, $urlRouterProvider) {
+function initRoute ($stateProvider, $urlRouterProvider) {
   $stateProvider
 
   .state('tab', {
