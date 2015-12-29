@@ -19,7 +19,7 @@ var paths = {
   dist: './www/dist/'
 };
 
-gulp.task('default', ['sass']);
+gulp.task('default', ['sass', 'templates', 'scripts']);
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -35,7 +35,7 @@ gulp.task('sass', function(done) {
     .on('end', done);
 });
 
-gulp.task('scripts', function(done) {
+gulp.task('templates', function(done) {
   return gulp.src(paths.templates)
     .pipe(nghtml2js({
       moduleName: 'chattyTemplates',
@@ -43,24 +43,32 @@ gulp.task('scripts', function(done) {
     }))
     .pipe(concat(pack.version+".temp.js"))
     .pipe(gulp.dest(paths.dist))
-    .pipe(gulp.src(paths.scripts)
-      .pipe(concat(pack.version+'.js'))
-      .pipe(gulp.dest(paths.dist))
-      .pipe(gulp.src([paths.dist+pack.version+".temp.js", paths.dist+pack.version+".js"])
-        .pipe(concat(pack.version+'.min.js'))
-        .pipe(uglify({
-          mangle: false
-        }))
-        .pipe(gulp.dest(paths.dist))
-      )
-    );
+    .pipe(rename({ extname: '.min.js' }))
+    .pipe(uglify({
+      mangle: false
+    }))
+    .pipe(gulp.dest(paths.dist))
+    //;
+    .on('end', done);
 });
 
+gulp.task('scripts', function(done) {
+  return gulp.src(paths.scripts)
+    .pipe(concat(pack.version+'.js'))
+    .pipe(gulp.dest(paths.dist))
+    .pipe(rename({ extname: '.min.js' }))
+    .pipe(uglify({
+      mangle: false
+    }))
+    .pipe(gulp.dest(paths.dist))
+    //;
+    .on('end', done);
+});
 
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
+  gulp.watch(paths.templates, ['templates']);
   gulp.watch(paths.scripts, ['scripts']);
-  gulp.watch(paths.templates, ['scripts']);
 });
 
 gulp.task('install', ['git-check'], function() {

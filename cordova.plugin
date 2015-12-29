@@ -1,0 +1,6 @@
+
+For Test Only
+ionic plugin add https://github.com/apache/cordova-plugin-whitelist.git
+<allow-navigation href="*" />
+
+https://github.com/vliesaputra/DeviceInformationPlugin.git

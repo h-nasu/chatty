@@ -1,3 +1,5 @@
+var test;
+
 angular
   .module('chatty', [
     'ionic',
@@ -8,9 +10,9 @@ angular
 
 angular
   .module('chatty')
-  .run(run);
+  .run(authReq);
 
-function run ($rootScope, $state) {
+function authReq ($rootScope, $state) {
   $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
     // We can catch the error thrown when the $requireUser promise is rejected
     // and redirect the user back to the main page
@@ -26,9 +28,9 @@ Messages = new Mongo.Collection('messages');
 
 angular
   .module('chatty')
-  .run(run);
+  .run(ionicPlat);
 
-function run ($ionicPlatform) {
+function ionicPlat ($rootScope, $ionicPlatform) {
   $ionicPlatform.ready(function () {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -41,14 +43,28 @@ function run ($ionicPlatform) {
       // org.apache.cordova.statusbar required
       StatusBar.styleLightContent();
     }
+
+    // If not PC
+    if (ionic.Platform.isWebView()) {
+      var deviceInfo = cordova.require("cordova/plugin/DeviceInformation");
+      deviceInfo.get(function(result) {
+        $rootScope.deviceInfo = JSON.parse(result);
+        // phone numbber
+        // $rootScope.deviceInfo.phoneNo
+
+      }, function() {
+         console.log("error");
+      });
+    }
+
   });
 }
 
 angular
   .module('chatty')
-  .config(config);
+  .config(initRoute);
 
-function config ($stateProvider, $urlRouterProvider) {
+function initRoute ($stateProvider, $urlRouterProvider) {
   $stateProvider
 
   .state('tab', {
@@ -435,21 +451,116 @@ function LoginConfig ($stateProvider) {
   ;
 }
 
-function LoginCtrl ($scope, $state, $ionicLoading, $ionicPopup, $log) {
+function LoginCtrl ($rootScope, $scope, $meteor, $state, $ionicLoading, $ionicPopup, $log) {
+
+  //$rootScope.deviceInfo = {phoneNo:90987689877};
+  //$rootScope.deviceInfo = {phoneNo:101919101};
+  if ($rootScope.deviceInfo && $rootScope.deviceInfo.phoneNo) {
+    var cb = function(){
+        $state.go('profile');
+      };
+    Accounts.callLoginMethod({
+      methodArguments: [$rootScope.deviceInfo],
+      userCallback: cb
+    });
+  }
 
   $scope.data = {};
   $scope.login = login;
+  
+  //$scope.data.email = 'fafa@fafa.com';
+  //$scope.data.password = 'fafa';
 
   ////////////
 
   function login () {
-    if (_.isEmpty($scope.data.phone)) {
-      return;
-    }
+    
+    $ionicLoading.show({
+      template: 'Logging In...'
+    });
+
+    $meteor.loginWithPassword($scope.data.email, $scope.data.password, function (err) {
+      $ionicLoading.hide();
+
+      if (err) {
+        return handleError(err);
+      }
+      $state.go('profile');
+    });
+  }
+
+  function handleError (err) {
+    $log.error('Login error ', err);
+
+    $ionicPopup.alert({
+      title: err.reason || 'Login failed',
+      template: 'Please try again',
+      okType: 'button-positive button-clear'
+   });
+  }
+}
+
+angular
+  .module('chatty')
+  .config(PendingConfig)
+  .controller('PendingCtrl', PendingCtrl);
+
+function PendingConfig ($stateProvider) {
+  $stateProvider
+  .state('pending', {
+    url: '/pending',
+    templateUrl: 'js/controllers/login/pending.html',
+    controller: 'PendingCtrl'
+  })
+  ;
+}
+
+function PendingCtrl ($rootScope, $scope, $state, $ionicLoading, $ionicPopup, $log) {
+
+
+}
+
+angular
+  .module('chatty')
+  .config(RegisterConfig)
+  .controller('RegisterCtrl', RegisterCtrl);
+
+function RegisterConfig ($stateProvider) {
+  $stateProvider
+  .state('register', {
+    url: '/register',
+    templateUrl: 'js/controllers/login/register.html',
+    controller: 'RegisterCtrl'
+  })
+  ;
+}
+
+function RegisterCtrl ($rootScope, $scope, $state, $ionicLoading, $ionicPopup, $log) {
+
+  $scope.data = {};
+  $scope.data.profile = {};
+  $scope.register = register;
+  //$scope.data.profile.phone = $rootScope.deviceInfo.phoneNo;
+  /*
+  $scope.data.profile.phone = 90987689877;
+  $scope.data.email = 'fafa@fafa.com';
+  $scope.data.password = 'fafa';
+  */
+
+  /*
+  $scope.data.profile.phone = 101919101;
+  $scope.data.email = 'gaga@gaga.com';
+  $scope.data.password = 'gaga';
+  */
+
+  function register() {
+    
+
+
 
     var confirmPopup = $ionicPopup.confirm({
-      title: 'Number confirmation',
-      template: '<div>' + $scope.data.phone + '</div><div>Is your phone number above correct?</div>',
+      title: 'Registeration confirmation',
+      template: '<div>Is your information correct?</div>',
       cssClass: 'text-center',
       okText: 'Yes',
       okType: 'button-positive button-clear',
@@ -463,30 +574,36 @@ function LoginCtrl ($scope, $state, $ionicLoading, $ionicPopup, $log) {
       }
 
       $ionicLoading.show({
-        template: 'Sending verification code...'
+        template: 'Registering Info...'
       });
 
-      Accounts.requestPhoneVerification($scope.data.phone, function (err) {
+      Accounts.createUser($scope.data, function (err) {
         $ionicLoading.hide();
 
         if (err) {
           return handleError(err);
         }
 
-        $state.go('confirmation', { phone: $scope.data.phone });
+        $state.go('pending');
       });
     });
   }
 
   function handleError (err) {
-    $log.error('Login error ', err);
+    console.log(err);
+    if (err.reason == 'Login forbidden') {
+      $state.go('pending');
+    } else {
+      $log.error('Registeration error ', err);
 
-    $ionicPopup.alert({
-      title: err.reason || 'Login failed',
-      template: 'Please try again',
-      okType: 'button-positive button-clear'
-   });
+      $ionicPopup.alert({
+        title: err.reason || 'Registeration failed',
+        template: 'Please try again',
+        okType: 'button-positive button-clear'
+      });
+    }
   }
+
 }
 
 angular

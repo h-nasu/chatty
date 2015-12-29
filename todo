@@ -1,0 +1,8 @@
+chrome://inspect/#devices
+http://ionicframework.com/docs/v2/resources/developer-tips/
+
+db.users.update({emails:[{address:"fafa@fafa.com", verified:false}]},{$set:{activate:true}})
+
+
+iconic run android -c -s -l 80
+?
