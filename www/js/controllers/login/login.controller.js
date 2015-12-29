@@ -13,46 +13,41 @@ function LoginConfig ($stateProvider) {
   ;
 }
 
-function LoginCtrl ($scope, $state, $ionicLoading, $ionicPopup, $log) {
+function LoginCtrl ($rootScope, $scope, $meteor, $state, $ionicLoading, $ionicPopup, $log) {
+
+  //$rootScope.deviceInfo = {phoneNo:90987689877};
+  //$rootScope.deviceInfo = {phoneNo:101919101};
+  if ($rootScope.deviceInfo && $rootScope.deviceInfo.phoneNo) {
+    var cb = function(){
+        $state.go('profile');
+      };
+    Accounts.callLoginMethod({
+      methodArguments: [$rootScope.deviceInfo],
+      userCallback: cb
+    });
+  }
 
   $scope.data = {};
   $scope.login = login;
+  
+  //$scope.data.email = 'fafa@fafa.com';
+  //$scope.data.password = 'fafa';
 
   ////////////
 
   function login () {
-    if (_.isEmpty($scope.data.phone)) {
-      return;
-    }
-
-    var confirmPopup = $ionicPopup.confirm({
-      title: 'Number confirmation',
-      template: '<div>' + $scope.data.phone + '</div><div>Is your phone number above correct?</div>',
-      cssClass: 'text-center',
-      okText: 'Yes',
-      okType: 'button-positive button-clear',
-      cancelText: 'edit',
-      cancelType: 'button-dark button-clear'
+    
+    $ionicLoading.show({
+      template: 'Logging In...'
     });
 
-    confirmPopup.then(function (res) {
-      if (! res) {
-        return;
+    $meteor.loginWithPassword($scope.data.email, $scope.data.password, function (err) {
+      $ionicLoading.hide();
+
+      if (err) {
+        return handleError(err);
       }
-
-      $ionicLoading.show({
-        template: 'Sending verification code...'
-      });
-
-      Accounts.requestPhoneVerification($scope.data.phone, function (err) {
-        $ionicLoading.hide();
-
-        if (err) {
-          return handleError(err);
-        }
-
-        $state.go('confirmation', { phone: $scope.data.phone });
-      });
+      $state.go('profile');
     });
   }
 

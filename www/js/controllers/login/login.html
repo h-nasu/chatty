@@ -1,17 +1,25 @@
 <ion-view title="Your phone number">
   <ion-nav-buttons side="right">
-    <button ng-click="login()" ng-disabled="!data.phone || data.phone.length === 0" class="button button-clear button-positive">Done</button>
+    <button ng-click="login()" class="button button-clear button-positive">Done</button>
   </ion-nav-buttons>
 
   <ion-content class="login">
     <div class="text-center instructions">
-      Please confirm your country code and enter your phone number
+      Please Login
     </div>
 
     <div class="list">
       <label class="item item-input">
-        <input ng-model="data.phone" on-return="login()" type="text" placeholder="Your phone number">
+        <input ng-model="data.email" type="text" placeholder="Your Email">
+      </label>
+      <label class="item item-input">
+        <input ng-model="data.password" type="password" placeholder="Your password">
       </label>
     </div>
+
+    <div class="padding text-center">
+      <button ui-sref="register" class="button button-clear button-assertive">Register</button>
+    </div>
+
   </ion-content>
 </ion-view>

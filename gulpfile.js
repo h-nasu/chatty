@@ -19,7 +19,7 @@ var paths = {
   dist: './www/dist/'
 };
 
-gulp.task('default', ['sass']);
+gulp.task('default', ['sass', 'templates', 'scripts']);
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -48,6 +48,7 @@ gulp.task('templates', function(done) {
       mangle: false
     }))
     .pipe(gulp.dest(paths.dist))
+    //;
     .on('end', done);
 });
 
@@ -60,6 +61,7 @@ gulp.task('scripts', function(done) {
       mangle: false
     }))
     .pipe(gulp.dest(paths.dist))
+    //;
     .on('end', done);
 });
 

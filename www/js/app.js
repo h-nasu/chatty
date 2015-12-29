@@ -1,3 +1,5 @@
+var test;
+
 angular
   .module('chatty', [
     'ionic',

@@ -2,7 +2,7 @@ angular
   .module('chatty')
   .run(ionicPlat);
 
-function ionicPlat ($ionicPlatform) {
+function ionicPlat ($rootScope, $ionicPlatform) {
   $ionicPlatform.ready(function () {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -17,17 +17,17 @@ function ionicPlat ($ionicPlatform) {
     }
 
     // If not PC
-    /*
-    if (!_.isEmpty(ionic.Platform.device())) {
-      //var deviceInfo = cordova.require("cordova/plugin/DeviceInformation");
-      var deviceInfo = window.cordova.plugins.DeviceInformation;
+    if (ionic.Platform.isWebView()) {
+      var deviceInfo = cordova.require("cordova/plugin/DeviceInformation");
       deviceInfo.get(function(result) {
-        console.log("result = " + result);
+        $rootScope.deviceInfo = JSON.parse(result);
+        // phone numbber
+        // $rootScope.deviceInfo.phoneNo
+
       }, function() {
          console.log("error");
       });
     }
-    */
 
   });
 }

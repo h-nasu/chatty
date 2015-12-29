@@ -194,22 +194,80 @@ module.run(['$templateCache', function($templateCache) {
   $templateCache.put('js/controllers/login/login.html',
     '<ion-view title="Your phone number">\n' +
     '  <ion-nav-buttons side="right">\n' +
-    '    <button ng-click="login()" ng-disabled="!data.phone || data.phone.length === 0" class="button button-clear button-positive">Done</button>\n' +
+    '    <button ng-click="login()" class="button button-clear button-positive">Done</button>\n' +
     '  </ion-nav-buttons>\n' +
     '\n' +
     '  <ion-content class="login">\n' +
     '    <div class="text-center instructions">\n' +
-    '      Please confirm your country code and enter your phone number\n' +
+    '      Please Login\n' +
     '    </div>\n' +
     '\n' +
     '    <div class="list">\n' +
     '      <label class="item item-input">\n' +
-    '        <input ng-model="data.phone" on-return="login()" type="text" placeholder="Your phone number">\n' +
+    '        <input ng-model="data.email" type="text" placeholder="Your Email">\n' +
+    '      </label>\n' +
+    '      <label class="item item-input">\n' +
+    '        <input ng-model="data.password" type="password" placeholder="Your password">\n' +
     '      </label>\n' +
     '    </div>\n' +
+    '\n' +
+    '    <div class="padding text-center">\n' +
+    '      <button ui-sref="register" class="button button-clear button-assertive">Register</button>\n' +
+    '    </div>\n' +
+    '\n' +
     '  </ion-content>\n' +
     '</ion-view>\n' +
     '');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('chattyTemplates');
+} catch (e) {
+  module = angular.module('chattyTemplates', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('js/controllers/login/pending.html',
+    '<ion-view title="Pending">\n' +
+    '\n' +
+    '  <ion-content class="pending">\n' +
+    '    <div class="text-center instructions">\n' +
+    '      Please wait until your account have been verified.\n' +
+    '    </div>\n' +
+    '  </ion-content>\n' +
+    '</ion-view>');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('chattyTemplates');
+} catch (e) {
+  module = angular.module('chattyTemplates', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('js/controllers/login/register.html',
+    '<ion-view title="Register">\n' +
+    '  <ion-nav-buttons side="right">\n' +
+    '    <button ng-click="register()" ng-disabled="!data.profile.phone || data.profile.phone.length === 0" class="button button-clear button-positive">Done</button>\n' +
+    '  </ion-nav-buttons>\n' +
+    '\n' +
+    '  <ion-content class="register">\n' +
+    '    <div class="text-center instructions">\n' +
+    '      Please enter you registration infomation.\n' +
+    '    </div>\n' +
+    '\n' +
+    '    <div class="list">\n' +
+    '      <label class="item item-input">\n' +
+    '        <input ng-model="data.email" type="text" placeholder="Your Email Address">\n' +
+    '      </label>\n' +
+    '      <label class="item item-input">\n' +
+    '        <input ng-model="data.password" type="password" placeholder="Your password">\n' +
+    '      </label>\n' +
+    '    </div>\n' +
+    '  </ion-content>\n' +
+    '</ion-view>');
 }]);
 })();
 
