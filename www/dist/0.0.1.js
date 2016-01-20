@@ -55,6 +55,53 @@ function ionicPlat ($rootScope, $ionicPlatform) {
       }, function() {
          console.log("error");
       });
+
+
+      // Push Notifocation Setup
+      
+      var localPushToken = JSON.parse(localStorage.getItem('_raix:push_token'));
+
+      if (!localPushToken) {
+        var interPush = setInterval(function(){
+          if (typeof PushNotification !== 'undefined') {
+            clearInterval(interPush);
+            Push.Configure({
+              gcm: {
+                // Required for Android and Chrome OS
+                projectNumber: '482046828327'
+              },
+              bagde: true,
+              sound: true,
+              alert: true
+            });
+          }
+        }, 300);
+      }
+
+      Push.addListener('error', function(err) {
+        console.log(err);
+      });
+
+      Push.addListener('token', function(token) {
+          // Token is { apn: 'xxxx' } or { gcm: 'xxxx' }
+          //console.log('token');
+          //console.log(token);
+      });
+
+      Push.addListener('register', function(evt) {
+          // Platform specific event - not really used
+          //console.log('reg');
+          //console.log(evt);
+      });
+
+      Push.addListener('alert', function(notification) {
+          // Called when message got a message in forground
+          //console.log('alert');
+          //console.log(notification);
+      });
+
+
+
     }
 
   });
@@ -127,6 +174,55 @@ Meteor.methods({
 
 angular
   .module('chatty')
+  .filter('calendar', calendar);
+
+function calendar () {
+  return function (time) {
+    if (! time) return;
+
+    return moment(time).calendar(null, {
+      lastDay : '[Yesterday]',
+      sameDay : 'LT',
+      lastWeek : 'dddd',
+      sameElse : 'DD/MM/YY'
+    });
+  }
+}
+
+angular
+  .module('chatty')
+  .filter('chatName', chatName);
+
+function chatName () {
+  return function (chat) {
+    if (!chat) return;
+
+    var otherId = _.without(chat.userIds, Meteor.userId())[0];
+    var otherUser = Meteor.users.findOne(otherId);
+    var hasName = otherUser && otherUser.profile && otherUser.profile.name;
+
+    return hasName ? otherUser.profile.name : 'PLACE HOLDER';
+  }
+}
+
+angular
+  .module('chatty')
+  .filter('chatPicture', chatPicture);
+
+function chatPicture () {
+  return function (chat) {
+    if (!chat) return;
+
+    var otherId = _.without(chat.userIds, Meteor.userId())[0];
+    var otherUser = Meteor.users.findOne(otherId);
+    var hasPicture = otherUser && otherUser.profile && otherUser.profile.picture;
+
+    return hasPicture ? otherUser.profile.picture : '/img/user-default.svg';
+  }
+}
+
+angular
+  .module('chatty')
   .directive('input', input);
 
 // The directive enable sending message when tapping return
@@ -177,55 +273,6 @@ function input ($timeout) {
         }
       }
     });
-  }
-}
-
-angular
-  .module('chatty')
-  .filter('calendar', calendar);
-
-function calendar () {
-  return function (time) {
-    if (! time) return;
-
-    return moment(time).calendar(null, {
-      lastDay : '[Yesterday]',
-      sameDay : 'LT',
-      lastWeek : 'dddd',
-      sameElse : 'DD/MM/YY'
-    });
-  }
-}
-
-angular
-  .module('chatty')
-  .filter('chatName', chatName);
-
-function chatName () {
-  return function (chat) {
-    if (!chat) return;
-
-    var otherId = _.without(chat.userIds, Meteor.userId())[0];
-    var otherUser = Meteor.users.findOne(otherId);
-    var hasName = otherUser && otherUser.profile && otherUser.profile.name;
-
-    return hasName ? otherUser.profile.name : 'PLACE HOLDER';
-  }
-}
-
-angular
-  .module('chatty')
-  .filter('chatPicture', chatPicture);
-
-function chatPicture () {
-  return function (chat) {
-    if (!chat) return;
-
-    var otherId = _.without(chat.userIds, Meteor.userId())[0];
-    var otherUser = Meteor.users.findOne(otherId);
-    var hasPicture = otherUser && otherUser.profile && otherUser.profile.picture;
-
-    return hasPicture ? otherUser.profile.picture : '/img/user-default.svg';
   }
 }
 
@@ -373,7 +420,8 @@ function NewChatCtrl ($scope, $state, $meteor) {
   }
 
   function newChat (userId) {
-    var chat = Chats.findOne({ type: 'chat', userIds: { $all: [Meteor.userId(), userId] } });
+    //var chat = Chats.findOne({ type: 'chat', userIds: { $all: [Meteor.userId(), userId] } });
+    var chat = Chats.findOne({ userIds: { $all: [Meteor.userId(), userId] } });
     if (chat) {
       return goToChat(chat._id);
     }
@@ -384,6 +432,101 @@ function NewChatCtrl ($scope, $state, $meteor) {
   function goToChat (chatId) {
     hideModal();
     return $state.go('tab.chat-detail', { chatId: chatId });
+  }
+}
+
+angular
+  .module('chatty')
+  .config(ContactsConfig)
+  .controller('ContactsCtrl', ContactsCtrl);
+
+function ContactsConfig ($stateProvider) {
+  $stateProvider
+  .state('tab.contacts', {
+    url: '/contacts',
+    views: {
+      'tab-contacts': {
+        templateUrl: 'js/controllers/contact/tab-contacts.html',
+        controller: 'ContactsCtrl'
+      }
+    }
+  })
+  ;
+}
+
+function ContactsCtrl ($scope, $meteor, $state, $ionicModal, $ionicPopup, $ionicLoading) {
+
+  $scope.$meteorSubscribe('users').then(function () {
+    $scope.users = $scope.$meteorCollection(function () {
+      //return Meteor.users.find({ _id: { $ne: Meteor.userId() } });
+      var me = Meteor.user();
+      if (me && !me.admin) {
+        return Meteor.users.find({_id: { $ne: Meteor.userId() }, activate:true});
+      } else {
+        return Meteor.users.find({ _id: { $ne: Meteor.userId() } });
+      }
+    }, false);
+  });
+
+  $scope.newChat = newChat;
+  $scope.activate= activate;
+
+  ////////////
+
+  function newChat (user) {
+    if (user.activate) {
+      //var chat = Chats.findOne({ type: 'chat', userIds: { $all: [Meteor.userId(), user._id] } });
+      var chat = Chats.findOne({ userIds: { $all: [Meteor.userId(), user._id] } });
+      if (chat) {
+        return goToChat(chat._id);
+      }
+      $meteor.call('newChat', user._id).then(goToChat);
+    } else {
+      activate(user);
+    }
+  }
+
+  function goToChat (chatId) {
+    //hideModal();
+    return $state.go('tab.chat-detail', { chatId: chatId });
+  }
+
+  function activate(user) {
+    //console.log(user);
+    var confirmPopup = $ionicPopup.confirm({
+      title: 'User Activation',
+      template: '<div>Change activation for '+user.emails[0].address+'?</div>',
+      cssClass: 'text-center',
+      okText: 'Yes',
+      okType: 'button-positive button-clear',
+      cancelText: 'Cancel',
+      cancelType: 'button-dark button-clear'
+    });
+
+    confirmPopup.then(function (res) {
+      if (! res) {
+        return;
+      }
+
+      $ionicLoading.show({
+        template: 'Registering Info...'
+      });
+
+      $meteor.call('changeUserActivation', user._id)
+        .then(function(result){
+          $ionicLoading.hide();
+        })
+        .catch(handleError);
+    });
+  }
+
+  function handleError (err) {
+    $log.error('profile save error ', err);
+    $ionicPopup.alert({
+      title: err.reason || 'Save failed',
+      template: 'Please try again',
+      okType: 'button-positive button-clear'
+    });
   }
 }
 
@@ -553,11 +696,13 @@ function RegisterCtrl ($rootScope, $scope, $state, $ionicLoading, $ionicPopup, $
   $scope.data.password = 'gaga';
   */
 
+  /*
+  $scope.data.profile.phone = 1111111;
+  $scope.data.email = 'dada@dada.com';
+  $scope.data.password = 'dada';
+  */
+
   function register() {
-    
-
-
-
     var confirmPopup = $ionicPopup.confirm({
       title: 'Registeration confirmation',
       template: '<div>Is your information correct?</div>',

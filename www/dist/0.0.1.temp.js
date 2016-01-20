@@ -159,6 +159,38 @@ try {
   module = angular.module('chattyTemplates', []);
 }
 module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('js/controllers/contact/tab-contacts.html',
+    '<ion-view view-title="Contacts">\n' +
+    '  <ion-content>\n' +
+    '    <ion-list>\n' +
+    '      <ion-item\n' +
+    '        ng-repeat="user in users"\n' +
+    '        class="item-chat item-remove-animate item-avatar item-icon-right"\n' +
+    '        type="item-text-wrap"\n' +
+    '        ng-click="newChat(user)">\n' +
+    '        <img ng-src="{{user | chatPicture}}">\n' +
+    '        <h2>{{user.profile.name}}</h2>\n' +
+    '        <p>{{user.emails[0].address}} {{user.profile.phone}}</p>\n' +
+    '        <span ng-if="!user.activate" class="badge badge-assertive">Not Active</span>\n' +
+    '        <i class="icon ion-chevron-right icon-accessory"></i>\n' +
+    '\n' +
+    '        <ion-option-button class="button-assertive" ng-click="activate(user)">\n' +
+    '          Activate\n' +
+    '        </ion-option-button>\n' +
+    '      </ion-item>\n' +
+    '    </ion-list>\n' +
+    '  </ion-content>\n' +
+    '</ion-view>');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('chattyTemplates');
+} catch (e) {
+  module = angular.module('chattyTemplates', []);
+}
+module.run(['$templateCache', function($templateCache) {
   $templateCache.put('js/controllers/login/confirmation.html',
     '<ion-view title="{{phone}}">\n' +
     '  <ion-nav-buttons side="right">\n' +
@@ -279,7 +311,7 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('js/controllers/setting/profile.html',
-    '<ion-view title="Profile">\n' +
+    '<ion-view title="Profile" cache-view="false">\n' +
     '  <ion-nav-buttons side="right">\n' +
     '    <button ng-click="updateName()" ng-disabled="!data.name || data.name.length === 0" class="button button-clear button-positive">Done</button>\n' +
     '  </ion-nav-buttons>\n' +

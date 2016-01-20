@@ -27,6 +27,53 @@ function ionicPlat ($rootScope, $ionicPlatform) {
       }, function() {
          console.log("error");
       });
+
+
+      // Push Notifocation Setup
+      
+      var localPushToken = JSON.parse(localStorage.getItem('_raix:push_token'));
+
+      if (!localPushToken) {
+        var interPush = setInterval(function(){
+          if (typeof PushNotification !== 'undefined') {
+            clearInterval(interPush);
+            Push.Configure({
+              gcm: {
+                // Required for Android and Chrome OS
+                projectNumber: '482046828327'
+              },
+              bagde: true,
+              sound: true,
+              alert: true
+            });
+          }
+        }, 300);
+      }
+
+      Push.addListener('error', function(err) {
+        console.log(err);
+      });
+
+      Push.addListener('token', function(token) {
+          // Token is { apn: 'xxxx' } or { gcm: 'xxxx' }
+          //console.log('token');
+          //console.log(token);
+      });
+
+      Push.addListener('register', function(evt) {
+          // Platform specific event - not really used
+          //console.log('reg');
+          //console.log(evt);
+      });
+
+      Push.addListener('alert', function(notification) {
+          // Called when message got a message in forground
+          //console.log('alert');
+          //console.log(notification);
+      });
+
+
+
     }
 
   });

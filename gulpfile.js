@@ -36,7 +36,7 @@ gulp.task('sass', function(done) {
 });
 
 gulp.task('templates', function(done) {
-  return gulp.src(paths.templates)
+  gulp.src(paths.templates)
     .pipe(nghtml2js({
       moduleName: 'chattyTemplates',
       prefix: 'js/'
@@ -53,7 +53,7 @@ gulp.task('templates', function(done) {
 });
 
 gulp.task('scripts', function(done) {
-  return gulp.src(paths.scripts)
+  gulp.src(paths.scripts)
     .pipe(concat(pack.version+'.js'))
     .pipe(gulp.dest(paths.dist))
     .pipe(rename({ extname: '.min.js' }))

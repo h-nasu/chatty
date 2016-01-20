@@ -4,3 +4,7 @@ ionic plugin add https://github.com/apache/cordova-plugin-whitelist.git
 <allow-navigation href="*" />
 
 https://github.com/vliesaputra/DeviceInformationPlugin.git
+
+ionic plugin add phonegap-plugin-push
+
+<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19" tools:overrideLibrary="org.apache.cordova, android.support.v13, com.google.android.gms.all,com.google.android.gms.ads,com.google.android.gms, com.google.android.gms.analytics,com.google.android.gms.appindexing, com.google.android.gms.appinvite,com.google.android.gms.appstate,com.google.android.gms.cast,com.google.android.gms.drive, com.google.android.gms.fitness,com.google.android.gms.location,com.google.android.gms.maps,com.google.android.gms.games, com.google.android.gms.gcm,com.google.android.gms.identity,com.google.android.gms.nearby,com.google.android.gms.panorama, com.google.android.gms.plus,com.google.android.gms.safetynet,com.google.android.gms.wallet,com.google.android.gms.wearable, com.google.android.gms.base, com.google.android.gms.measurement" />

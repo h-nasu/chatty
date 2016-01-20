@@ -19,7 +19,8 @@ function NewChatCtrl ($scope, $state, $meteor) {
   }
 
   function newChat (userId) {
-    var chat = Chats.findOne({ type: 'chat', userIds: { $all: [Meteor.userId(), userId] } });
+    //var chat = Chats.findOne({ type: 'chat', userIds: { $all: [Meteor.userId(), userId] } });
+    var chat = Chats.findOne({ userIds: { $all: [Meteor.userId(), userId] } });
     if (chat) {
       return goToChat(chat._id);
     }

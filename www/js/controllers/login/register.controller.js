@@ -31,11 +31,13 @@ function RegisterCtrl ($rootScope, $scope, $state, $ionicLoading, $ionicPopup, $
   $scope.data.password = 'gaga';
   */
 
+  /*
+  $scope.data.profile.phone = 1111111;
+  $scope.data.email = 'dada@dada.com';
+  $scope.data.password = 'dada';
+  */
+
   function register() {
-    
-
-
-
     var confirmPopup = $ionicPopup.confirm({
       title: 'Registeration confirmation',
       template: '<div>Is your information correct?</div>',
